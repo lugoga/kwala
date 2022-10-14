@@ -1,0 +1,47 @@
+---
+title: "data processing"
+author: "Masumbuko Semab"
+format: html
+---
+
+# Introduction
+This document contains R code that is used to compute and plots. 
+
+```{r}
+
+require(tidyverse)
+require(sf)
+require(terra)
+require(tidyterra)
+require(tmap)
+require(magrittr)
+require(highcharter)
+require(plotly)
+
+options(scipen = 999)
+
+tmap_mode(mode = "view")
+
+```
+
+
+```{r}
+
+land.use = st_read("proposed_landuses.shp", quiet = TRUE)
+
+land.use = land.use %>% 
+  st_make_valid() %>% 
+  # st_is_valid() %>% 
+  mutate(area_m2 = st_area(geometry) %>% as.numeric(),
+         area_ha = area_m2/10000)
+
+
+```
+
+
+```{r}
+land.use %>% 
+  tm_shape(name = "Land Use") +
+  tm_fill(col = "Name", id = "Name", popup.vars = c("Area (Ha):" = "area_ha"))
+```
+
